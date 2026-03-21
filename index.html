@@ -2112,14 +2112,14 @@ body { background: var(--paper); color: var(--ink); font-family: var(--serif); f
     <a class="ham-item" href="#sec-firewall"   onclick="closeHamMenu()"><span class="ham-item-tag blue">06</span><span class="ham-item-name">Legal Firewall</span><span class="ham-item-sub">Organizations &amp; litigation defending election law</span></a>
     <a class="ham-item" href="#sec-legislation" onclick="closeHamMenu()"><span class="ham-item-tag red">07</span><span class="ham-item-name">Legislation Watch</span><span class="ham-item-sub">Active bills · watchlist · legislative graveyard</span></a>
     <a class="ham-item" href="#sec-international" onclick="closeHamMenu()"><span class="ham-item-tag red">08</span><span class="ham-item-name">Foreign Threats</span><span class="ham-item-sub">State-sponsored interference · allied democratic watch</span></a>
-    <a class="ham-item" href="#sec-states"     onclick="closeHamMenu()"><span class="ham-item-tag purple">09</span><span class="ham-item-name">State Officials</span><span class="ham-item-sub">All 50 state election officials · friend or foe</span></a>
+    <a class="ham-item" href="#sec-states"     onclick="closeHamMenu()"><span class="ham-item-tag purple">08</span><span class="ham-item-name">Senior Election Officials</span><span class="ham-item-sub">All 50 state election officials · friend or foe</span></a>
     <a class="ham-item" href="#sec-global"     onclick="closeHamMenu()"><span class="ham-item-tag teal">10</span><span class="ham-item-name">Global Democracy Context</span><span class="ham-item-sub">V-Dem &amp; Freedom House · 15-country comparison</span></a>
   </div>
 </nav>
 
 <!-- TICKER -->
 <div class="ticker">
-  <div class="ticker-inner" id="ticker-inner"><span class="ticker-item">⚡ Loading latest election intelligence…</span></div>
+  <div class="ticker-inner" id="ticker-inner"><span class="ticker-item" style="opacity:0.85;margin-right:80px">Welcome to Election Integrity Watch, a joint project of American Muckrakers and Parallax Advisory. Here are the latest US election headlines.</span><span class="ticker-item">⚡ Loading latest election intelligence…</span></div>
 </div>
 
 <!-- MAIN CONTENT -->
@@ -2423,6 +2423,26 @@ body { background: var(--paper); color: var(--ink); font-family: var(--serif); f
   <div id="leg-grave-panel" style="display:none">
     <div class="grave-grid" id="graveyard-grid"></div>
   </div>
+  <hr class="section-divider">
+  <!-- STATE ELECTION OFFICIALS -->
+  <div class="section-header" id="sec-states">
+    <span class="section-tag" style="background:#6d28d9">State Officials</span>
+    <span class="section-h">All 50 State Election Officials — Friend or Foe of Democracy?</span>
+  </div>
+  <div class="state-filter-bar">
+    <button class="filter-btn active" onclick="filterStates('all', this)">All States</button>
+    <button class="filter-btn" onclick="filterStates('battleground', this)">⚡ Battleground</button>
+    <button class="filter-btn" onclick="filterStates('friend', this)">🟢 Resisting</button>
+    <button class="filter-btn" onclick="filterStates('foe', this)">🔴 Complying</button>
+    <button class="filter-btn" onclick="filterStates('mixed', this)">🟡 Mixed</button>
+    <button class="filter-btn" onclick="filterStates('unknown', this)">⬜ Unassigned</button>
+    <button class="filter-btn" onclick="filterStates('D', this)">Dem</button>
+    <button class="filter-btn" onclick="filterStates('R', this)">Rep</button>
+    <span class="filter-count" id="state-count"></span>
+  </div>
+  <div class="state-grid" id="state-grid"></div>
+
+
 <hr class="section-divider">
   <!-- INTERNATIONAL SECTION -->
   <div class="section-header" id="sec-international">
@@ -2453,26 +2473,6 @@ body { background: var(--paper); color: var(--ink); font-family: var(--serif); f
     </div>
     <div class="unknown-chips" id="unknown-threats-list"></div>
   </div>
-
-
-  <hr class="section-divider">
-  <!-- STATE ELECTION OFFICIALS -->
-  <div class="section-header" id="sec-states">
-    <span class="section-tag" style="background:#6d28d9">State Officials</span>
-    <span class="section-h">All 50 State Election Officials — Friend or Foe of Democracy?</span>
-  </div>
-  <div class="state-filter-bar">
-    <button class="filter-btn active" onclick="filterStates('all', this)">All States</button>
-    <button class="filter-btn" onclick="filterStates('battleground', this)">⚡ Battleground</button>
-    <button class="filter-btn" onclick="filterStates('friend', this)">🟢 Resisting</button>
-    <button class="filter-btn" onclick="filterStates('foe', this)">🔴 Complying</button>
-    <button class="filter-btn" onclick="filterStates('mixed', this)">🟡 Mixed</button>
-    <button class="filter-btn" onclick="filterStates('unknown', this)">⬜ Unassigned</button>
-    <button class="filter-btn" onclick="filterStates('D', this)">Dem</button>
-    <button class="filter-btn" onclick="filterStates('R', this)">Rep</button>
-    <span class="filter-count" id="state-count"></span>
-  </div>
-  <div class="state-grid" id="state-grid"></div>
 
 
   <hr class="section-divider">
@@ -3133,6 +3133,82 @@ const FIREWALL = [
   { org:"ACLU Voting Rights Project", founder:"ACLU", cases:"Multistate litigation", desc:"Challenges voter ID laws, polling place closures, purges, and voting restrictions across all 50 states.", focus:"Voter ID · Purges · Polling access · Mail voting", query:"ACLU voting rights cases 2026" },
   { org:"Brennan Center for Justice", founder:"NYU Law", cases:"Research + Litigation", desc:"Produces definitive research on voting restrictions; provides legal support to election administrators.", focus:"Election security · Voting laws · Democracy reform", query:"Brennan Center election research 2026" },
 ];
+
+// ── Issue intel fetch — strict no-narration ─────────────────────
+async function fetchIssueIntel(query) {
+  const key = getApiKey();
+  try {
+    const body = {
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 200,
+      system: "You are a factual news summarizer. Respond with exactly two lines:\nLine 1: One sentence summary of current status (max 20 words).\nLine 2: One word only — ACTIVE, BLOCKED, WATCH, or RESOLVED.\nNo other text. No search narration. No XML. No bullets.",
+      messages: [{ role: "user", content: "Current status of: " + query + "\nRespond with exactly 2 lines as instructed." }],
+      tools: [{ type: "web_search_20250305", name: "web_search" }]
+    };
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify(body)
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const texts = (data.content || []).filter(b => b.type === "text").map(b => b.text);
+    return texts.join("\n").trim() || null;
+  } catch(e) { return null; }
+}
+
+// ── Ticker-specific fetch — raw headlines only ──────────────────
+async function fetchTickerHeadlines() {
+  const key = getApiKey();
+  const today = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  try {
+    // Step 1: Search with web tool — get raw results
+    const searchBody = {
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1000,
+      system: "You are a news research assistant. Search the web and summarize what you find. Be thorough.",
+      messages: [{ role: "user", content:
+        "Search for US election integrity, voting rights, and democracy news published in the past 7 days (today is " + today + "). Find at least 8 distinct stories. List each story with its title and date."
+      }],
+      tools: [{ type: "web_search_20250305", name: "web_search" }]
+    };
+    const searchResp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+      body: JSON.stringify(searchBody)
+    });
+    if (!searchResp.ok) return null;
+    const searchData = await searchResp.json();
+    const rawText = (searchData.content || []).filter(b => b.type === "text").map(b => b.text).join("\n");
+    if (!rawText || rawText.length < 50) return null;
+
+    // Step 2: Format pass — strip all narration, output only headlines
+    const formatBody = {
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 300,
+      system: "You reformat text into a plain list. Output ONLY the list. No intro sentences. No explanation. No narration. Nothing except the list items, one per line.",
+      messages: [{ role: "user", content:
+        "From this news summary, extract exactly 8 headlines. Output ONLY the 8 headlines, one per line, max 12 words each, no bullets, no numbers, no other text:\n\n" + rawText.slice(0, 2000)
+      }]
+    };
+    const formatResp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+      body: JSON.stringify(formatBody)
+    });
+    if (!formatResp.ok) return null;
+    const formatData = await formatResp.json();
+    const headlines = (formatData.content || []).filter(b => b.type === "text").map(b => b.text).join("\n");
+    return headlines.trim() || null;
+  } catch(e) {
+    return null;
+  }
+}
 
 // ================================================================
 // DEMOCRACY RISK SCORE ENGINE (1-10)
@@ -3841,11 +3917,21 @@ async function loadIssue(issue) {
     }
   }, INTEL_TIMEOUT_MS);
   try {
-    const result = await withTimeout(claudeSearch(`Search: ${issue.query}. One sentence status. New line: ACTIVE, BLOCKED, WATCH, or RESOLVED.`), INTEL_TIMEOUT_MS);
+    const rawResult = await withTimeout(fetchIssueIntel(issue.query), INTEL_TIMEOUT_MS);
     clearTimeout(timeoutHandle);
-    const lines = (result||'').trim().split('\n');
-    const word = lines[lines.length-1].trim().toUpperCase();
-    const summary = lines.slice(0,-1).join(' ').trim();
+    const statusWords = ['ACTIVE','BLOCKED','WATCH','RESOLVED'];
+    const allLines = (rawResult||'').trim().split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+    const lastLine = (allLines[allLines.length-1]||'').toUpperCase();
+    const word = statusWords.includes(lastLine) ? lastLine :
+                 statusWords.find(w => (rawResult||'').toUpperCase().includes(w)) || 'WATCH';
+    const summaryLines = allLines.filter(l =>
+      !statusWords.includes(l.toUpperCase()) &&
+      !l.startsWith('<') && !l.startsWith('---') &&
+      !l.includes("I'll") && !l.toLowerCase().includes('search') &&
+      !l.includes('INTEL:') && !l.includes('QUOTE:') &&
+      l.length > 10
+    );
+    const summary = summaryLines[0] || '';
     if (summary && descEl) descEl.textContent = summary;
     if (pillEl) {
       const map = {ACTIVE:'pill-active',BLOCKED:'pill-blocked',WATCH:'pill-watch',RESOLVED:'pill-blocked'};
@@ -4097,13 +4183,7 @@ async function loadTicker() {
   }
 
   try {
-    const today = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-    const result = await claudeSearchRaw(
-      'Search for US election integrity and democracy news from the past 7 days only. Today is ' + today + '. ' +
-      'Find 8 significant recent developments on: US election security, democracy threats, voting rights, election law, officials actions, foreign interference. ' +
-      'ONLY include stories from the past 7 days. Reject anything older. ' +
-      'Reply ONLY as plain lines, one headline per line, max 12 words each, include the month and year, no numbering, no bullets.'
-    );
+    const result = await fetchTickerHeadlines();
 
     if (!result || result.length < 20) return;
 
@@ -4128,7 +4208,8 @@ function _applyTickerItems(inner, items) {
   inner.style.opacity = '0';
   inner.style.transition = 'opacity 0.4s';
   setTimeout(() => {
-    inner.innerHTML = items.map(item => `<span class="ticker-item">⚡ ${item}</span>`).join('');
+    const leadIn = '<span class="ticker-item" style="opacity:0.85;margin-right:80px">Welcome to Election Integrity Watch, a joint project of American Muckrakers and Parallax Advisory. Here are the latest US election headlines.</span>';
+    inner.innerHTML = leadIn + items.map(item => `<span class="ticker-item">⚡ ${item}</span>`).join('');
     const clone = inner.cloneNode(true);
     inner.parentNode.replaceChild(clone, inner);
     clone.style.opacity = '1';
