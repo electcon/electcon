@@ -3374,9 +3374,7 @@ async function claudeSearch(prompt, model="claude-sonnet-4-5-20250929", retries=
         const err = await resp.text();
         console.error("API error", resp.status, err);
         if (resp.status === 401) {
-          sessionStorage.removeItem("eiw_api_key");
-          showKeyModal();
-          document.getElementById("key-error").textContent = "Key rejected — please re-enter.";
+          console.error("API key rejected (401)");
         }
         return null;
       }
@@ -4658,7 +4656,7 @@ async function populateDossierConns(card, prefix, idx, name, side) {
   }
 
   // Then enrich with live API if key available
-  const apiKey = sessionStorage.getItem('eiw_api_key');
+  const apiKey = "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";
   if (!apiKey) {
     if (!seedConns.length) connsEl.innerHTML = '<div style="font-family:var(--mono);font-size:0.65rem;color:#9ca3af">No connections loaded — API key required.</div>';
     return;
@@ -5048,7 +5046,7 @@ function graphBuildNodes() {}
 
 async function loadGraphConnections() {
   // Live search for additional documented connections between key actors
-  const apiKey = sessionStorage.getItem('eiw_api_key');
+  const apiKey = "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";
   if (!apiKey) return;
 
   const topThreats   = PEOPLE.slice(0, 8).map(p => p.name);
@@ -5110,7 +5108,7 @@ async function buildMeetingIntelFeed() {
   const container = document.getElementById('meetintel-cards');
   if (!container) return;
   container.innerHTML = '';
-  const apiKey = sessionStorage.getItem('eiw_api_key');
+  const apiKey = "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";
   const typeColors = { meeting:'#fee2e2;color:#b91c1c', comms:'#fff7ed;color:#c2410c', coordinated:'#fefce8;color:#854d0e', financial:'#dcfce7;color:#15803d', concerning:'#f5f3ff;color:#6d28d9' };
 
   // Render all card shells immediately (no API calls yet)
@@ -5211,10 +5209,7 @@ function initGraphObserver() {
 // ── Single boot entry point ──────────────────────────────────────
 function boot() {
   sessionStorage.setItem("eiw_api_key", "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");
-  if (!sessionStorage.getItem("eiw_api_key")) {
-    showKeyModal();
-    return;
-  }
+  // API key hardcoded — no modal needed
 
   // Show gauge immediately at baseline — updates when API returns
   // 6.8 reflects current V-Dem LDI trajectory and expert consensus baseline
