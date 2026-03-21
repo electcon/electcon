@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Embed ELECTCON™ — Election Integrity Watch</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #fafaf8; color: #111; font-family: 'IBM Plex Mono', monospace; font-size: 15px; line-height: 1.7; padding: 48px 24px; max-width: 720px; margin: 0 auto; }
+h1 { font-family: 'Syne', sans-serif; font-weight: 900; font-size: 1.6rem; letter-spacing: -0.02em; margin-bottom: 4px; }
+h1 em { color: #b91c1c; font-style: normal; }
+.subtitle { font-size: 0.75rem; color: #6b7280; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 32px; }
+h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase; color: #1d4ed8; margin: 32px 0 10px; }
+p { font-size: 0.88rem; color: #374151; margin-bottom: 14px; }
+pre { background: #0d0d0d; color: #e5e7eb; border-radius: 6px; padding: 16px 20px; font-size: 0.82rem; line-height: 1.8; overflow-x: auto; margin-bottom: 20px; }
+code { background: #f1f0ec; padding: 2px 6px; border-radius: 3px; font-size: 0.82rem; color: #1f2937; }
+.divider { border: none; border-top: 1px solid #e0dbd2; margin: 32px 0; }
+.badge { display: inline-block; background: #b91c1c; color: #fff; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: 3px; margin-bottom: 24px; }
+.json-box { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 4px; padding: 14px 18px; font-size: 0.78rem; color: #92400e; margin-bottom: 20px; }
+.json-box strong { display: block; margin-bottom: 6px; font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; }
+a { color: #b91c1c; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid #e0dbd2; font-size: 0.72rem; color: #9ca3af; }
+.preview-wrap { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 24px; }
+.preview-label { font-size: 0.62rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+  <div class="badge">Free · Attribution Required</div>
+  <h1><em>ELECTCON™</em> Embed Guide</h1>
+  <div class="subtitle">Election Integrity Watch · americanmuckrakers.com/electcon</div>
+
+  <p>Display the live ELECTCON™ Election Risk Condition on your website. Two files, two lines of code. When we update the level, every embedded widget updates automatically.</p>
+
+  <hr class="divider">
+
+  <h2>1 · Add two lines to your page</h2>
+  <p>Paste this wherever you want the widget to appear — a sidebar, footer, or dedicated page:</p>
+  <pre>&lt;div id="electcon-widget"&gt;&lt;/div&gt;
+&lt;script src="https://electcon.github.io/electcon/electcon-widget.js"&gt;&lt;/script&gt;</pre>
+
+  <h2>2 · That's it</h2>
+  <p>No API key. No configuration. No backend. The widget fetches the current level automatically and updates daily.</p>
+
+  <hr class="divider">
+
+  <h2>Live Preview</h2>
+  <div class="preview-wrap">
+    <div>
+      <div class="preview-label">Widget Preview</div>
+      <div id="electcon-widget"></div>
+      <script src="https://electcon.github.io/electcon/electcon-widget.js"></script>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Current Level Data</h2>
+  <p>The widget reads from this JSON file, which we update whenever the ELECTCON level changes:</p>
+  <div class="json-box">
+    <strong>electcon-level.json</strong>
+    {"level": 3, "score": 6.5, "headline": "Organized interference underway", "updated": "Mar 2026"}
+  </div>
+  <p>You can also fetch this file directly in your own applications: <code>https://electcon.github.io/electcon/electcon-level.json</code></p>
+
+  <hr class="divider">
+
+  <h2>Terms of Use</h2>
+  <p>Free to embed with attribution. The widget footer must remain visible and unmodified. Do not modify the widget to remove or alter the Election Integrity Watch branding or links.</p>
+
+  <div class="footer">
+    Election Integrity Watch is a program of
+    <a href="https://americanmuckrakers.com" target="_blank">American Muckrakers II</a>
+    &amp;
+    <a href="https://parallaxadvisory.llc" target="_blank">Parallax Advisory LLC</a>.
+    © 2026 All rights reserved.
+  </div>
+
+</body>
+</html>
