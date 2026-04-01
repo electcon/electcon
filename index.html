@@ -3184,7 +3184,11 @@ async function fetchTickerHeadlines() {
     });
     if (!searchResp.ok) return null;
     const searchData = await searchResp.json();
-    const rawText = (searchData.content || []).filter(b => b.type === "text").map(b => b.text).join("\n");
+    const rawText = (searchData.content || []).flatMap(b => {
+      if (b.type === 'text') return [b.text];
+      if (b.type === 'tool_result') return (b.content || []).filter(c => c.type === 'text').map(c => c.text);
+      return [];
+    }).join('\n');
     if (!rawText || rawText.length < 50) return null;
 
     // Step 2: Format pass — strip all narration, output only headlines
